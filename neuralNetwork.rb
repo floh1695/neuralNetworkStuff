@@ -53,12 +53,21 @@ for net in netMap
     netMap[netName] = getNet netName, 8, 8
 end
 
-puts "Entering interactive mode"
+puts "Entering interactive mode. Type HELP for assistance."
 while true
-    # TODO: Interactive stuff here
+    print "$> "
     input = gets.chomp.upcase
-    if ["QUIT", "EXIT"].include? input
+    if ["H", "HELP"].include? input
+        puts "H | HELP"
+        puts "    This help message"
+        puts "Q | QUIT | EXIT"
+        puts "    Exits the program safely."
+    elsif ["Q", "QUIT", "EXIT"].include? input
         break
+    elsif input.strip.empty?
+        # String is empty. Do nothing.
+    else
+        puts "ERROR: \"#{input}\" is not understood."
     end
 end
 
