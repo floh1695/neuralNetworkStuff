@@ -4,18 +4,38 @@ require "rubygems" # Depended on by "ai4r"
 require "ai4r"     # NeuralNetwork stuff
 require "yaml"     # Storing networks in files
 
+# Globals
+LambdaNet = Ai4r::NeuralNetwork::Backpropagation.new [0]
+
 def netFileName netName
     return "./saves/#{netName.downcase}.ai4r.yaml"
 end
 
+def correctNetLambdas net
+    net.initial_weight_function = LambdaNet.initial_weight_function
+    net.propagation_function = LambdaNet.propagation_function
+    net.derivative_propagation_function = LambdaNet.derivative_propagation_function
+end
+
 def getNet netName, inputL, outputL
-    filename = netFileName 
-    #return Ai4r::NeuralNetwork::Backpropagation.new [inputL, inputL * outputL, outputL]
+    filename = netFileName netName
+    if File.exist? filename
+        net = YAML.load(File.read(filename))
+        correctNetLambdas net
+        return net
+    else
+        return Ai4r::NeuralNetwork::Backpropagation.new [inputL, inputL * outputL, outputL]
+    end
 end
 
 def saveNets netMap
     for netSet in netMap
-        File.write(netFileName(netSet[0]), YAML.dump(netSet[1]))
+        net = netSet[1]
+        net.initial_weight_function = nil
+        net.propagation_function = nil
+        net.derivative_propagation_function = nil
+        File.write(netFileName(netSet[0]), YAML.dump(net))
+        correctNetLambdas net
     end
 end
 
