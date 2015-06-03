@@ -3,6 +3,7 @@
 require "rubygems" # Depended on by "ai4r"
 require "ai4r"     # NeuralNetwork stuff
 require "yaml"     # Storing networks in files
+require "colorize"
 
 # Globals
 LambdaNet = Ai4r::NeuralNetwork::Backpropagation.new [0]
@@ -55,7 +56,7 @@ end
 
 puts "Entering interactive mode. Type HELP for assistance."
 while true
-    print "$> "
+    print "$>".yellow + " "
     input = gets.chomp.upcase
     if ["H", "HELP"].include? input
         puts "H | HELP"
@@ -64,6 +65,10 @@ while true
         puts "    Exits the program safely."
     elsif ["Q", "QUIT", "EXIT"].include? input
         break
+    elsif ["L", "LIST"].include? input
+        for net in netMap
+            puts "#{net[0]}"
+        end
     elsif input.strip.empty?
         # String is empty. Do nothing.
     else
