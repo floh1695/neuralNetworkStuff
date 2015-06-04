@@ -15,7 +15,8 @@ end
 def correctNetLambdas net
     net.initial_weight_function = LambdaNet.initial_weight_function
     net.propagation_function = LambdaNet.propagation_function
-    net.derivative_propagation_function = LambdaNet.derivative_propagation_function
+    net.derivative_propagation_function = 
+            LambdaNet.derivative_propagation_function
 end
 
 def getNet netName, inputL, outputL
@@ -25,7 +26,8 @@ def getNet netName, inputL, outputL
         correctNetLambdas net
         return net
     else
-        return Ai4r::NeuralNetwork::Backpropagation.new [inputL, inputL * outputL, outputL]
+        return Ai4r::NeuralNetwork
+                ::Backpropagation.new [inputL, inputL * outputL, outputL]
     end
 end
 
@@ -54,25 +56,45 @@ for net in netMap
     netMap[netName] = getNet netName, 8, 8
 end
 
+selectedNet = nil
 puts "Entering interactive mode. Type HELP for assistance."
 while true
     print "$>".yellow + " "
-    input = gets.chomp.upcase
-    if ["H", "HELP"].include? input
+    input = gets.chomp.upcase.split
+    command = input[0]
+    if ["H", "HELP"].include? command
         puts "H | HELP"
         puts "    This help message"
+        puts "L | LIST"
+        puts "    List all available networks."
+        puts "S | SELECT"
+        puts "    Select the current working network."
+        puts "T | TRAIN"
+        puts "    Train the working network."
+        puts "E | EVAL | EVALUATE"
+        puts "    Give the working network an input to evaluate."
         puts "Q | QUIT | EXIT"
         puts "    Exits the program safely."
-    elsif ["Q", "QUIT", "EXIT"].include? input
+    elsif ["Q", "QUIT", "EXIT"].include? command
         break
-    elsif ["L", "LIST"].include? input
+    elsif ["L", "LIST"].include? command
         for net in netMap
             puts "#{net[0]}"
         end
-    elsif input.strip.empty?
+    elsif ["S", "SELECT"].include? command
+        if netMap[input[1]] != nil
+            selectedNet = netMap[input[1]]
+        else
+            puts "\"#{input[1]}\" is not an available network."
+        end
+    elsif ["T", "TRAIN"].include? command
+        # TODO: Make a training menu
+    elsif ["E", "EVAL", "EVALUATE"].include? command
+        # TODO: Make an evaluation menu
+    elsif command == nil
         # String is empty. Do nothing.
     else
-        puts "ERROR: \"#{input}\" is not understood."
+        puts "ERROR: \"#{command}\" is not understood."
     end
 end
 
